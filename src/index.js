@@ -4,6 +4,15 @@ require("dotenv").config()
 const app = express()
 const PORT = 3000
 
+require('./models/College')
+require('./models/Notice')
+require('./models/Review')
+require('./models/Stamp')
+require('./models/Store')
+require('./models/StoreList')
+require('./models/User')
+
+
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -20,6 +29,7 @@ db.on('error', (err) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 app.get('/', (req, res) => {
     res.send('Hello. This is CampusDot')

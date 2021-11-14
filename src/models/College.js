@@ -11,6 +11,14 @@ const collegeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
+    Latitude: {
+        type: Number,
+        required:true,
+    },
+    Longtitude: {
+        type: Number,
+        required:true,
+    },
 });
 
 mongoose.model('College', collegeSchema);

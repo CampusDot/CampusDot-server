@@ -5,10 +5,10 @@ const storeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Review'       
     }],
-    College: [{
+    College: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'College'       
-    }],
+    },
     Information: {
         type: Object,
     },

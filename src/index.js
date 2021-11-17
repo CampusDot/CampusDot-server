@@ -14,6 +14,7 @@ require('./models/User')
 
 const authRoutes = require('./routes/Auth')
 const userRoutes = require('./routes/User')
+const collegeRoutes = require('./routes/College')
 const requireAuth = require('./middlewares/RequireAuth')
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -36,6 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(authRoutes)
 app.use(requireAuth)
 app.use('/user', userRoutes)
+app.use('/college', collegeRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello. This is CampusDot')

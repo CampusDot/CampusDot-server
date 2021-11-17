@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
     Approved:{
         type: Boolean,
         default: false,
+    },
+    AllStamp: {
+        type: Number,
+        default: 0
     }
 });
 

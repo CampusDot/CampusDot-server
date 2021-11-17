@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const reviewSchema = new mongoose.Schema({
-
     PostUser : {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -21,6 +19,10 @@ const reviewSchema = new mongoose.Schema({
     Rating: {
         type: Number,
     }, 
+    Store: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Store'
+    }
 });
 
 mongoose.model('Review', reviewSchema);

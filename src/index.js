@@ -11,7 +11,10 @@ require('./models/Stamp')
 require('./models/Store')
 require('./models/StoreList')
 require('./models/User')
+
 const authRoutes = require('./routes/Auth')
+const userRoutes = require('./routes/User')
+const requireAuth = require('./middlewares/RequireAuth')
 
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -31,6 +34,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(authRoutes)
+app.use(requireAuth)
+app.use('/user', userRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello. This is CampusDot')

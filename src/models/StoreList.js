@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
-const storelistSchema = new mongoose.Schema({
+const storeListSchema = new mongoose.Schema({
     StoreList: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'StoreList'      
+        ref: 'Store'      
     }],
     SavedUser: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -33,4 +32,4 @@ const storelistSchema = new mongoose.Schema({
 
 });
 
-mongoose.model('StoreList', storelistSchema);
+mongoose.model('StoreList', storeListSchema);

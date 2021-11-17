@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const stampSchema = new mongoose.Schema({
-
     Type: {
         type: String,
         required: true,

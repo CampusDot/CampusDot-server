@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
         }
         const { userId } = payload;
         const user = await User.findById(userId, {
-            Name: 1, ProfileImage: 1, College: 1, UsedStamp: 1, Approved: 1
+            Name: 1, ProfileImage: 1, College: 1, UsedStamp: 1, Approved: 1, AllStamp: 1
         })
         req.user = user;
         next();

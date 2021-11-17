@@ -2,11 +2,10 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const StoreList = mongoose.model('StoreList')
 const Review = mongoose.model('Review')
-const Stamp = mongoose.model('Stamp')
 
 const getInformation = async (req, res) => {
     try {
-        const [challengeLists, storeLists, reviews, stamps] = await Promise.all([
+        const [challengeLists, storeLists, reviews] = await Promise.all([
             StoreList.find({ 
                 SavedUser: { $in: req.user._id }
             }, {
@@ -25,10 +24,7 @@ const getInformation = async (req, res) => {
                 PostUser: req.user._id
             }).populate('Store', {
                 Information: 1
-            }),
-            Stamp.find({ 
-                Owner: req.user._id 
-            }, { _id: 1 })
+            })
         ])
         const information = {
             Name: req.user.Name,
@@ -36,10 +32,10 @@ const getInformation = async (req, res) => {
             College: req.user.College,
             UsedStamp: req.user.UsedStamp,
             Approved: req.user.Approved,
+            AllStamp: req.user.AllStamp,
             ChallengeLists: challengeLists,
             StoreLists: storeLists,
             Review: reviews,
-            AllStamp: stamps
         }
         res.status(200).send(information)
     } catch (err) {

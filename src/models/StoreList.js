@@ -29,7 +29,13 @@ const storeListSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-
+    College: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'College'
+    },
+    Comment: {
+        type: String
+    }
 });
 
 mongoose.model('StoreList', storeListSchema);

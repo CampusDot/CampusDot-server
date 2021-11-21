@@ -4,6 +4,6 @@ const {
     postStoreList,
 } = require('../controllers/StoreList')
 
-router.post('/storelist', postStoreList)
+router.post('', postStoreList)
 
 module.exports = router

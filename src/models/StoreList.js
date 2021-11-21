@@ -19,7 +19,7 @@ const storeListSchema = new mongoose.Schema({
     },
     Review: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Review'
     }],
     Time: {
         type: Date,

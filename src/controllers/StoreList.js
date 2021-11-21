@@ -8,15 +8,13 @@ require('date-utils');
 
 const postStoreList = async (req, res) => {
     const { Stores, Title, Comment } = req.body;
-    var newDate = new Date()
-    var Time = newDate.toFormat('YYYY-MM-DD HH24:MI:SS');
-    var StoreInfo = [];
-    var Review = [];
+    const Time = new Date()
+    let StoreInfo = [];
+    let Review = [];
     for ( k=0; k<Stores.length; k++){
         StoreInfo.push(Stores[k].store);
         Review.push(Stores[k].comment);
     }
-    console.log(StoreInfo);
     try {
         const storelist = 
             new StoreList({
@@ -25,17 +23,14 @@ const postStoreList = async (req, res) => {
               Title, 
               Comment, 
               Time, 
-              PostUser : req.params._id, 
-              College:req.user.College
-            });
+              PostUser: req.user._id, 
+              College: req.user.College
+            }).save();
         res.send(storelist);
-        storelist.save();
     } catch (err) {
         res.status(422).send(err.message)
     }
 }
-
-
 
 module.exports = {
     postStoreList,

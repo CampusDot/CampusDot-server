@@ -16,6 +16,7 @@ const authRoutes = require('./routes/Auth')
 const userRoutes = require('./routes/User')
 const collegeRoutes = require('./routes/College')
 const requireAuth = require('./middlewares/RequireAuth')
+const searchRoutes = require('./routes/Search')
 
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -37,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(authRoutes)
 app.use(requireAuth)
 app.use('/user', userRoutes)
+app.use('/search', searchRoutes)
 app.use('/college', collegeRoutes)
 
 app.get('/', (req, res) => {

@@ -9,7 +9,7 @@ const signIn = async (req, res) => {
         if (!email || !password) {
             return res.status(422).send()
         }
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ Email: email })
         if(!user) {
             return res.status(422).send()
         }

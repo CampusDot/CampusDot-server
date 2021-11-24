@@ -57,6 +57,7 @@ const getSelectedStoreList = async (req, res) => {
                     'PostUser.Name': 1,
                     'PostUser.ProfileImage': 1,
                     'PostUser.AllStamp': 1,
+                    'StoreList._id': 1,
                     'StoreList.Information.name': 1,
                     'StoreList.Information.photos': 1,
                     'StoreList.Information.vicinity': 1,

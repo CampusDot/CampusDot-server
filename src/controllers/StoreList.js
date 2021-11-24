@@ -10,16 +10,16 @@ const postStoreList = async (req, res) => {
     const { Stores, Title, Comment } = req.body;
     const Time = new Date()
     let StoreInfo = [];
-    let Review = [];
+    let StoreComment = [];
     for ( k=0; k<Stores.length; k++){
         StoreInfo.push(Stores[k].store);
-        Review.push(Stores[k].comment);
+        StoreComment.push(Stores[k].comment);
     }
     try {
         const storelist = 
             new StoreList({
               StoreList: StoreInfo, 
-              Review, 
+              StoreComment, 
               Title, 
               Comment, 
               Time, 

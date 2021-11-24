@@ -36,7 +36,34 @@ const getStoreHint = async (req, res) => {
             }
         ])
         console.log(stores)
-        res.status(200).send(stores)
+        res.send(stores)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
+const getStores = async (req, res) => {
+    try {
+        const stores = await Store.aggregate([
+            {
+                $match: {
+                    $and: [{
+                        College: req.user.College,
+                        'Information.name': {
+                            $regex: `${req.params.term}`
+                        }
+                    }]
+                }
+            }, {
+                $project: {
+                    name: '$Information.name',
+                    photos: '$Information.photos',
+                    vicinity: '$Information.vicinity',
+                }
+            }
+        ])
+        console.log(stores)
+        res.send(stores)
     } catch (err) {
         res.status(422).send(err.message)
     }
@@ -44,5 +71,6 @@ const getStoreHint = async (req, res) => {
 
 module.exports = {
     getCollegeHint,
-    getStoreHint
+    getStoreHint,
+    getStores
 }

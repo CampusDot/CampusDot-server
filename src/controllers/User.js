@@ -12,6 +12,8 @@ const getInformation = async (req, res) => {
                 StoreList: 1, Time: 1, Title: 1, PostUser: 1
             }).populate('StoreList', {
                 Information: 1
+            }).populate('PostUser', {
+                Name: 1, ProfileImage: 1, AllStamp: 1,
             }),
             StoreList.find({ 
                 PostUser: req.user._id

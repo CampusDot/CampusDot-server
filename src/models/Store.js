@@ -15,6 +15,10 @@ const storeSchema = new mongoose.Schema({
     Category:{
         type: String,
     },
+    Rating: {
+        type: Number,
+        default: -1,
+    }
 });
 
 mongoose.model('Store', storeSchema);

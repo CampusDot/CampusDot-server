@@ -46,7 +46,7 @@ const getStoreLists = async (req, res) => {
         }).populate('StoreList', {
             Information: 1
         }).populate('PostUser', {
-            Name: 1, ProfileImage: 1
+            Name: 1, ProfileImage: 1, AllStamp: 1
         }).limit(20).skip(20 * req.params.page)
         res.status(200).send(storeLists)
     } catch (err) {
@@ -56,7 +56,7 @@ const getStoreLists = async (req, res) => {
 
 const getCollege = async (req, res) => {
     try {
-        const collegs = await College.aggregate([
+        const colleges = await College.aggregate([
             { 
                 $project: { 
                     StudentCount: { $size: "$Student" },
@@ -68,7 +68,7 @@ const getCollege = async (req, res) => {
                 }
             }
         ]).limit(10)
-        res.status(200).send(collegs)
+        res.status(200).send(colleges)
     } catch (err) {
         res.status(422).send(err.message)
     }

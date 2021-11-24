@@ -27,6 +27,7 @@ const getInformation = async (req, res) => {
             })
         ])
         const information = {
+            Id: req.user._id,
             Name: req.user.Name,
             ProfileImage: req.user.ProfileImage,
             College: req.user.College,

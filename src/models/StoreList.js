@@ -5,6 +5,9 @@ const storeListSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store'      
     }],
+    StoreComment: [{
+        type: String,
+    }],
     SavedUser: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'   

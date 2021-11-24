@@ -16,6 +16,7 @@ const authRoutes = require('./routes/Auth')
 const userRoutes = require('./routes/User')
 const collegeRoutes = require('./routes/College')
 const storelistRoutes = require('./routes/StoreList')
+const reviewRoutes = require('./routes/Review')
 
 const requireAuth = require('./middlewares/RequireAuth')
 const searchRoutes = require('./routes/Search')
@@ -43,7 +44,7 @@ app.use('/user', userRoutes)
 app.use('/search', searchRoutes)
 app.use('/college', collegeRoutes)
 app.use('/storelist', storelistRoutes)
-
+app.use('/review', reviewRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello. This is CampusDot')

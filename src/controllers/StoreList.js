@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const StoreList = mongoose.model('StoreList');
+const Review = mongoose.model('Review');
 require('date-utils');
 
 const postStoreList = async (req, res) => {
@@ -86,8 +87,54 @@ const challengeStoreList = async (req, res) => {
     }
 }
 
+const getChallengeLists = async (req, res) => {
+    try {
+        let reviewLists = []
+        let result = []
+        const challengeLists = await StoreList.find({ 
+            SavedUser: { $in: req.user._id }
+        }, {
+            StoreList: 1, Title: 1
+        }).populate('StoreList', {
+            _id: 1,
+            'Information.name': 1,
+            'Information.photos': 1,
+            'Information.vicinity': 1
+        })
+        const reviews = await Review.find({
+            PostUser: req.user._id
+        }, {
+            Store: 1
+        })
+        Object.values(reviews).forEach((review) => reviewLists.push(String(review.Store)))
+        Object.values(challengeLists).forEach((challenge) => {
+            const store = { 
+                _id: challenge._id, 
+                photo: challenge.StoreList[0].Information.photos,
+                title: challenge.Title
+            }
+            const AllNum = challenge.StoreList.length
+            let completeNum = 0
+            Object.values(challenge.StoreList).forEach((store) => {
+                if (reviewLists.includes(String(store._id))) {
+                    completeNum += 1
+                }
+            })
+            result.push({
+                storeInfo: store,
+                storeCount: AllNum,
+                completeCount: completeNum
+            })
+        })
+        res.status(200).send(result)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
 module.exports = {
     postStoreList,
     getSelectedStoreList,
     challengeStoreList,
+    getChallengeLists
 }

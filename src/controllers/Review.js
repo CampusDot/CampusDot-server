@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Review = mongoose.model('Review');
 const StoreList = mongoose.model('StoreList')
+const User = mongoose.model('User')
 require('date-utils');
 
 const postReview = async (req, res) => {
@@ -14,6 +15,13 @@ const postReview = async (req, res) => {
             Time,
             PostUser: req.user._id
         }).save();
+        await User.findOneAndUpdate({
+            _id: req.user._id
+        }, {
+            $inc: {
+                AllStamp: 1,
+            }
+        })
         res.status(200).send(review._id);
     } catch (err) {
         res.status(422).send(err.message)

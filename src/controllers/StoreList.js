@@ -4,25 +4,18 @@ const Review = mongoose.model('Review');
 require('date-utils');
 
 const postStoreList = async (req, res) => {
-    const { Stores, Title, Comment } = req.body;
+    const { Stores, Title, Comment, StoreComment } = req.body;
     const Time = new Date()
-    let StoreInfo = [];
-    let StoreComment = [];
-    for ( k=0; k<Stores.length; k++){
-        StoreInfo.push(Stores[k].store);
-        StoreComment.push(Stores[k].comment);
-    }
     try {
-        const storelist = 
-            new StoreList({
-              StoreList: StoreInfo, 
-              StoreComment, 
-              Title, 
-              Comment, 
-              Time, 
-              PostUser: req.user._id, 
-              College: req.user.College
-            }).save();
+        const storelist = new StoreList({
+            StoreList: Stores, 
+            StoreComment, 
+            Title, 
+            Comment, 
+            Time, 
+            PostUser: req.user._id, 
+            College: req.user.College
+        }).save();
         res.send(storelist);
     } catch (err) {
         res.status(422).send(err.message)

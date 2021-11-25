@@ -7,14 +7,14 @@ const postReview = async (req, res) => {
     const { Content, Rating, Store } = req.body;
     const Time = new Date();
     try {
-        const review = new Review({
+        const review = await new Review({
             Content,
             Rating,
             Store,
             Time,
             PostUser: req.user._id
         }).save();
-        res.send(review);
+        res.status(200).send(review._id);
     } catch (err) {
         res.status(422).send(err.message)
     }
@@ -71,8 +71,30 @@ const getSelectedReview = async (req, res) => {
     }
 }
 
+const uploadImage = async (req, res) => {
+    try {
+        const { reviewId } = req.body
+        const imageLists = req.files.img
+        let photoLists = []
+        Object.values(imageLists).forEach((image) => {
+            photoLists.push(image.location)
+        })
+        const review = await Review.findOneAndUpdate({
+            _id: reviewId
+        }, {
+            $set: { Photo: photoLists }
+        }, {
+            new: true
+        })
+        res.status(200).send(review)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
 module.exports = {
     postReview,
     getReviewStore,
-    getSelectedReview
+    getSelectedReview,
+    uploadImage
 }

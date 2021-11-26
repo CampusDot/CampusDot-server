@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const StoreList = mongoose.model('StoreList');
 const Review = mongoose.model('Review');
+const Notice = mongoose.model('Notice');
 require('date-utils');
 
 const postStoreList = async (req, res) => {
@@ -68,7 +69,8 @@ const getSelectedStoreList = async (req, res) => {
 const challengeStoreList = async (req, res) => {
     try {
         const { id } = req.body
-        await StoreList.findOneAndUpdate({
+        const Time = new Date()
+        const storelist = await StoreList.findOneAndUpdate({
             _id: id 
         }, {
             $push: {
@@ -76,6 +78,14 @@ const challengeStoreList = async (req, res) => {
             }
         })
         res.status(200).send(id)
+        new Notice({
+            Type: 'Challenge',
+            NoticingUser: req.user._id, 
+            NoticedUser: storelist.PostUser,
+            Content: '내용', 
+            Target: id,
+            Time, 
+        }).save()
     } catch (err) {
         res.status(422).send(err.message)
     }

@@ -21,6 +21,10 @@ const noticeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'StoreList'
     },
+    Time: {
+        type: Date,
+        required: true,
+    },
 });
 
 mongoose.model('Notice', noticeSchema);

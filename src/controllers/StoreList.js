@@ -24,6 +24,13 @@ const postStoreList = async (req, res) => {
 
 const getSelectedStoreList = async (req, res) => {
     try {
+        let reviewStoreId = []
+        let reviewResult = {}
+        const reviews = await Review.find({
+            PostUser: req.user._id
+        }, {
+            Store: 1
+        })
         const storeList = await StoreList.aggregate([
             { $match: { _id: mongoose.Types.ObjectId(req.params.id) }},
             {
@@ -59,7 +66,11 @@ const getSelectedStoreList = async (req, res) => {
                 }
             }
         ])
-        res.status(200).send(storeList[0])
+        Object.values(reviews).forEach((review) => reviewStoreId.push(String(review.Store)))
+        Object.values(storeList[0].StoreList).forEach((store) => {
+            reviewResult[store._id] = reviewStoreId.includes(String(store._id))
+        })
+        res.status(200).send([storeList[0], reviewResult])
     } catch (err) {
         res.status(422).send(err.message)
     }

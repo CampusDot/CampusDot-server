@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Review = mongoose.model('Review');
 const StoreList = mongoose.model('StoreList')
 const User = mongoose.model('User')
+const Store = mongoose.model('Store')
 require('date-utils');
 
 const postReview = async (req, res) => {
@@ -69,14 +70,21 @@ const getReviewStore = async (req, res) => {
 
 const getSelectedReview = async (req, res) => {
     try {
-        const reviewLists = await Review.find({
-            Store: req.params.id
-        }, {
-            PostUser: 1, Content: 1, Photo: 1, Rating: 1
-        }).populate('PostUser', {
-            Name: 1, ProfileImage: 1, AllStamp: 1
-        })
-        res.status(200).send(reviewLists)
+        const [reviewLists, store] = await Promise.all([
+            Review.find({
+                Store: req.params.id
+            }, {
+                PostUser: 1, Content: 1, Photo: 1, Rating: 1
+            }).populate('PostUser', {
+                Name: 1, ProfileImage: 1, AllStamp: 1
+            }),
+            Store.find({
+                _id: req.params.id
+            }, {
+                Information: 1, Rating: 1,
+            }),
+        ]);
+        res.status(200).send([reviewLists, store])
     } catch (err) {
         res.status(422).send(err.message)
     }

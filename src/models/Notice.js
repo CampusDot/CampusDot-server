@@ -15,7 +15,6 @@ const noticeSchema = new mongoose.Schema({
     },
     Content: {
         type: String,
-        required: true,
     },
     Target: {
         type: mongoose.Schema.Types.ObjectId,

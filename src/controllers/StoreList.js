@@ -82,7 +82,6 @@ const challengeStoreList = async (req, res) => {
             Type: 'Challenge',
             NoticingUser: req.user._id, 
             NoticedUser: storelist.PostUser,
-            Content: '내용', 
             Target: id,
             Time, 
         }).save()

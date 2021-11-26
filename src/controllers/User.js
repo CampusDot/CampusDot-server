@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const StoreList = mongoose.model('StoreList')
 const Review = mongoose.model('Review')
+const Notice = mongoose.model('Notice');
 
 const getInformation = async (req, res) => {
     try {
-        const [challengeLists, storeLists, reviews] = await Promise.all([
+        const [challengeLists, storeLists, reviews, notices] = await Promise.all([
             StoreList.find({ 
                 SavedUser: { $in: req.user._id }
             }, {
@@ -26,7 +27,16 @@ const getInformation = async (req, res) => {
                 PostUser: req.user._id
             }).populate('Store', {
                 Information: 1
+            }),
+            Notice.find({
+                NoticedUser: req.user._id
+            }).sort({'Time': -1}).populate('NoticingUser', {
+                Name: 1,
+                ProfileImage: 1,
+                Type: 1,
+                Target: 1,
             })
+            
         ])
         const information = {
             Id: req.user._id,
@@ -39,6 +49,7 @@ const getInformation = async (req, res) => {
             ChallengeLists: challengeLists,
             StoreLists: storeLists,
             Review: reviews,
+            Notice: notices,
         }
         res.status(200).send(information)
     } catch (err) {
@@ -99,10 +110,27 @@ const getReviews = async (req, res) => {
     }
 }
 
+const getNotices = async (req, res) => {
+    try {
+        const notices = await Notice.find({
+            NoticedUser: req.user._id
+        }).sort({'Time': -1}).populate('NoticingUser', {
+            Name: 1,
+            ProfileImage: 1,
+            Type: 1,
+            Target: 1,
+        })
+        res.status(200).send(notices)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
 module.exports = {
     getInformation,
     updateProfile,
     getChallengeLists,
     getStoreLists,
-    getReviews
+    getReviews,
+    getNotices,
 }

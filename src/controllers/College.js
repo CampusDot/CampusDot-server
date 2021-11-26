@@ -42,7 +42,7 @@ const getStoreLists = async (req, res) => {
         const storeLists = await StoreList.find({ 
             College: req.user.College
         }, {
-            StoreList: 1, SavedUser: 1, FinishedUser: 1, PostUser: 1, Time: 1, Title: 1
+            StoreList: 1, SavedUser: 1, FinishedUser: 1, PostUser: 1, Time: 1, Title: 1, Comment: 1
         }).populate('StoreList', {
             Information: 1
         }).populate('PostUser', {

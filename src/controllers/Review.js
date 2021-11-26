@@ -42,7 +42,10 @@ const getReviewStore = async (req, res) => {
             }).populate('StoreList', {
                 'Information.name': 1,
                 'Information.photos': 1,
-                'Information.vicinity': 1
+                'Information.vicinity': 1,
+                Review: 1,
+                Rating: 1,
+
             }),
             Review.find({
                 PostUser: req.user._id

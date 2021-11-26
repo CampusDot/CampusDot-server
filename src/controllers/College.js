@@ -9,6 +9,8 @@ const Category = {
     'Chinese': '중식',
     'Japanese': '일식',
     'Western': '양식',
+    'Cafe': '카페',
+    'Snack': '분식'
 }
 
 const getStore = async (req, res) => {
@@ -48,7 +50,8 @@ const getStoreLists = async (req, res) => {
         }).populate('PostUser', {
             Name: 1, ProfileImage: 1, AllStamp: 1
         }).limit(20).skip(20 * req.params.page)
-        res.status(200).send(storeLists)
+        const result = storeLists.filter((storeList) => !storeList.SavedUser.includes(req.user._id))
+        res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)
     }
@@ -83,7 +86,12 @@ const getMyCollegeRanking = async (req, res) => {
         }).sort({
             AllStamp: -1
         }).limit(10)
-        res.status(200).send(users)
+        const college = await College.findOne({
+            _id: req.user.College
+        }, {
+            Name: 1
+        })
+        res.status(200).send([users, college])
     } catch (err) {
         res.status(422).send(err.message)
     }

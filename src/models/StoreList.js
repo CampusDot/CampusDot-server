@@ -5,9 +5,9 @@ const storeListSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store'      
     }],
-    StoreComment: [{
+    StoreComment: {
         type: Object,
-    }],
+    },
     SavedUser: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'   

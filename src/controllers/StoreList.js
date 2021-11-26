@@ -48,6 +48,7 @@ const getSelectedStoreList = async (req, res) => {
                     Title: 1,
                     Comment: 1,
                     SavedUser: 1,
+                    StoreComment: 1,
                     'PostUser.Name': 1,
                     'PostUser.ProfileImage': 1,
                     'PostUser.AllStamp': 1,

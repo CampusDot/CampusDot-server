@@ -29,7 +29,7 @@ const getInformation = async (req, res) => {
                 Information: 1
             }),
             Notice.find({
-                PostUser: req.user._id
+                NoticedUser: req.user._id
             }).sort({'Time': -1}).populate('NoticingUser', {
                 Name: 1,
                 ProfileImage: 1,
@@ -113,7 +113,7 @@ const getReviews = async (req, res) => {
 const getNotices = async (req, res) => {
     try {
         const notices = await Notice.find({
-            PostUser: req.user._id
+            NoticedUser: req.user._id
         }).sort({'Time': -1}).populate('NoticingUser', {
             Name: 1,
             ProfileImage: 1,

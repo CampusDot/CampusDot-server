@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const StoreList = mongoose.model('StoreList');
 const Review = mongoose.model('Review');
 const Notice = mongoose.model('Notice');
+const Stamp = mongoose.model('Stamp')
+const User = mongoose.model('User')
 require('date-utils');
 
 const postStoreList = async (req, res) => {
@@ -146,9 +148,45 @@ const getChallengeLists = async (req, res) => {
     }
 }
 
+const completeStoreList = async (req, res) => {
+    try {
+        const { id } = req.body
+        const [storeList] = await Promise.all([
+            StoreList.findOneAndUpdate({
+                _id: id
+            }, {
+                $push: {
+                    FinishedUser: mongoose.Types.ObjectId(req.user._id)
+                },
+                $pull: {
+                    SavedUser: mongoose.Types.ObjectId(req.user._id)
+                }
+            }),
+            User.findOneAndUpdate({
+                _id: req.user._id
+            }, {
+                $inc: {
+                    AllStamp: 1,
+                }
+            }, {
+                new: true
+            })
+        ])
+        await new Stamp({
+            Type: 'StoreList',
+            Owner: req.user._id,
+            TargetStoreList: id
+        }).save()
+        res.status(200).send(storeList)
+    } catch (err) {
+        res.status(422).send(err.message)   
+    }
+}
+
 module.exports = {
     postStoreList,
     getSelectedStoreList,
     challengeStoreList,
-    getChallengeLists
+    getChallengeLists,
+    completeStoreList
 }

@@ -3,6 +3,7 @@ const Review = mongoose.model('Review');
 const StoreList = mongoose.model('StoreList')
 const User = mongoose.model('User')
 const Store = mongoose.model('Store')
+const Stamp = mongoose.model('Stamp')
 require('date-utils');
 
 const postReview = async (req, res) => {
@@ -23,6 +24,11 @@ const postReview = async (req, res) => {
                 AllStamp: 1,
             }
         })
+        await new Stamp({
+            Type: 'Store',
+            Owner: req.user._id,
+            TargetStore: Store
+        }).save()
         res.status(200).send(review._id);
     } catch (err) {
         res.status(422).send(err.message)

@@ -7,19 +7,20 @@ const User = mongoose.model('User')
 require('date-utils');
 
 const postStoreList = async (req, res) => {
-    const { Stores, Title, Comment, StoreComment } = req.body;
+    const { Stores, Title, Comment, StoreComment, PhotoLists } = req.body;
     const Time = new Date()
     try {
-        const storelist = new StoreList({
+        const storelist = await new StoreList({
             StoreList: Stores, 
             StoreComment, 
             Title, 
             Comment, 
             Time, 
             PostUser: req.user._id, 
-            College: req.user.College
+            College: req.user.College,
+            StorePhoto: PhotoLists
         }).save();
-        res.send(storelist);
+        res.send(storelist._id);
     } catch (err) {
         res.status(422).send(err.message)
     }
@@ -30,7 +31,11 @@ const getSelectedStoreList = async (req, res) => {
         let reviewStoreId = []
         let reviewResult = {}
         const reviews = await Review.find({
-            PostUser: req.user._id
+            $and: [{
+                PostUser: req.user._id
+            }, {
+                StoreList: req.params.id
+            }]
         }, {
             Store: 1
         })
@@ -59,6 +64,7 @@ const getSelectedStoreList = async (req, res) => {
                     Comment: 1,
                     SavedUser: 1,
                     StoreComment: 1,
+                    StorePhoto: 1,
                     'PostUser.Name': 1,
                     'PostUser.ProfileImage': 1,
                     'PostUser.AllStamp': 1,
@@ -110,7 +116,7 @@ const getChallengeLists = async (req, res) => {
         const challengeLists = await StoreList.find({ 
             SavedUser: { $in: req.user._id }
         }, {
-            StoreList: 1, Title: 1
+            StoreList: 1, Title: 1, StorePhoto: 1
         }).populate('StoreList', {
             _id: 1,
             'Information.name': 1,
@@ -120,21 +126,25 @@ const getChallengeLists = async (req, res) => {
         const reviews = await Review.find({
             PostUser: req.user._id
         }, {
-            Store: 1
+            Store: 1, StoreList: 1
         })
-        Object.values(reviews).forEach((review) => reviewLists.push(String(review.Store)))
+        Object.values(reviews).forEach((review) => reviewLists.push({
+            storeList: String(review.StoreList),
+            store: String(review.Store)
+        }))
         Object.values(challengeLists).forEach((challenge) => {
+            const storePhoto = challenge.StoreList[0].Information.photos ? challenge.StoreList[0].Information.photos[0].photo_reference : ''
+            const photo = challenge.StorePhoto[String(challenge.StoreList[0]._id)] ? 
+            challenge.StorePhoto[String(challenge.StoreList[0]._id)] : storePhoto
             const store = { 
                 _id: challenge._id, 
-                photo: challenge.StoreList[0].Information.photos,
+                photo: photo,
                 title: challenge.Title
             }
             const AllNum = challenge.StoreList.length
             let completeNum = 0
             Object.values(challenge.StoreList).forEach((store) => {
-                if (reviewLists.includes(String(store._id))) {
-                    completeNum += 1
-                }
+                completeNum += reviewLists.filter(review => review.store === String(store._id) && review.storeList === String(challenge._id)).length
             })
             result.push({
                 storeInfo: store,
@@ -183,10 +193,37 @@ const completeStoreList = async (req, res) => {
     }
 }
 
+const uploadImage = async (req, res) => {
+    try {
+        const { storeListId } = req.body
+        const imageLists = req.files.img
+        let photoLists = {}
+        const storeList = await StoreList.findOne({
+            _id: storeListId
+        }, {
+            StorePhoto: 1
+        })
+        Object.values(imageLists).forEach((image) => {
+            photoLists[storeList.StorePhoto[image.originalname]] = image.location            
+        })
+        const newStoreList = await StoreList.findOneAndUpdate({
+            _id: storeListId
+        }, {
+            $set: { StorePhoto: photoLists }
+        }, {
+            new: true
+        })
+        res.status(200).send(newStoreList)
+    } catch (err) {
+        res.status(422).send(err.message)  
+    } 
+}
+
 module.exports = {
     postStoreList,
     getSelectedStoreList,
     challengeStoreList,
     getChallengeLists,
-    completeStoreList
+    completeStoreList,
+    uploadImage
 }

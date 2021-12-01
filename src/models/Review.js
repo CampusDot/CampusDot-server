@@ -22,6 +22,10 @@ const reviewSchema = new mongoose.Schema({
     Store: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store'
+    },
+    StoreList: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'StoreList'
     }
 });
 

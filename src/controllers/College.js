@@ -44,9 +44,9 @@ const getStoreLists = async (req, res) => {
         const storeLists = await StoreList.find({ 
             College: req.user.College
         }, {
-            StoreList: 1, SavedUser: 1, FinishedUser: 1, PostUser: 1, Time: 1, Title: 1, Comment: 1
+            StoreList: 1, SavedUser: 1, FinishedUser: 1, PostUser: 1, Time: 1, Title: 1, Comment: 1, StorePhoto: 1
         }).populate('StoreList', {
-            Information: 1
+            Information: 1,
         }).populate('PostUser', {
             Name: 1, ProfileImage: 1, AllStamp: 1
         }).limit(20).skip(20 * req.params.page)

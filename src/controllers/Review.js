@@ -7,7 +7,7 @@ const Stamp = mongoose.model('Stamp')
 require('date-utils');
 
 const postReview = async (req, res) => {
-    const { Content, Rating, Store } = req.body;
+    const { Content, Rating, Store, StoreList } = req.body;
     const Time = new Date();
     try {
         const review = await new Review({
@@ -15,6 +15,7 @@ const postReview = async (req, res) => {
             Rating,
             Store,
             Time,
+            StoreList,
             PostUser: req.user._id
         }).save();
         await User.findOneAndUpdate({
@@ -45,26 +46,50 @@ const getReviewStore = async (req, res) => {
                     $in: req.user._id
                 }
             }, {
-                StoreList: 1,
+                StoreList: 1, StorePhoto: 1
             }).populate('StoreList', {
                 'Information.name': 1,
                 'Information.photos': 1,
                 'Information.vicinity': 1,
                 Review: 1,
                 Rating: 1,
-
             }),
             Review.find({
                 PostUser: req.user._id
             }, {
-                Store: 1
+                Store: 1, StoreList: 1
             })
         ])
-        Object.values(reviews).forEach((review) => reviewStoreLists.push(String(review.Store)))
+        Object.values(reviews).forEach((review) => reviewStoreLists.push({
+            storeList: String(review.StoreList),
+            store: String(review.Store)
+        }))
         Object.values(storeList).forEach((stores) => {
             Object.values(stores.StoreList).forEach((store) => {
-                if (!reviewStoreLists.includes(String(store._id))) {
-                    result.push(store)
+                const Information = {
+                    name: store.Information.name,
+                    vicinity: store.Information.vicinity,
+                    photo: store.Information.photos ? store.Information.photos[0].photo_reference : '' 
+                }
+                const storeData = {
+                    Rating: store.Rating,
+                    Review: store.Review,
+                    _id: store._id,
+                    Information: {},
+                    storeListId: stores._id
+                }
+                let reviewCheck = true
+                if (stores.StorePhoto[String(store._id)]) {
+                    Information.photo = stores.StorePhoto[String(store._id)]
+                } 
+                Object.values(reviewStoreLists).forEach((review) => {
+                    if(review.store === String(store._id) && review.storeList === String(stores._id)) {
+                        reviewCheck = false
+                    }
+                })
+                if(reviewCheck) {
+                    storeData.Information = Information
+                    result.push(storeData)
                 }
             })
         })
@@ -84,7 +109,7 @@ const getSelectedReview = async (req, res) => {
             }).populate('PostUser', {
                 Name: 1, ProfileImage: 1, AllStamp: 1
             }),
-            Store.find({
+            Store.findOne({
                 _id: req.params.id
             }, {
                 Information: 1, Rating: 1,

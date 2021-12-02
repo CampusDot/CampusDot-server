@@ -38,6 +38,9 @@ const storeListSchema = new mongoose.Schema({
     },
     Comment: {
         type: String
+    },
+    StorePhoto: {
+        type: Object,
     }
 });
 

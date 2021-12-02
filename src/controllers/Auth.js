@@ -31,7 +31,7 @@ const signUp = async (req, res) => {
     try {
         const { email, password, college, name } = req.body
         const myCollege = await College.findOne({ Name: college })
-        const newUser = new User({
+        const newUser = await new User({
             Email: email,
             Password: password,
             Name: name,
@@ -46,7 +46,6 @@ const signUp = async (req, res) => {
 
 const signDelete = async (req, res) => {
     try {
-        console.log(req.user);
         await Promise.all([
           StoreList.deleteMany({PostUser:req.params.id}),
           Notice.deleteMany({NoticedUser:req.params.id}),
@@ -76,7 +75,7 @@ const googleSignIn = async (req, res) => {
 }
 
 const naverSignIn = async (req, res) => {
-    let naverOption = {
+    const naverOption = {
         url: "https://openapi.naver.com/v1/nid/me",
         method: 'GET',
         headers: {

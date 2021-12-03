@@ -15,7 +15,7 @@ const storeSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    ReviewLen: {
+    ReviewCount: {
         type: Number,
         default: 0,        
     },

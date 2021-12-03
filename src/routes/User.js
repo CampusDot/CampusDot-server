@@ -1,8 +1,11 @@
 const express = require('express')
 const router = express.Router()
+const upload = require('../middlewares/Upload')
+
 const {
     getInformation,
     updateProfile,
+    updateCollege,
     getChallengeLists,
     getStoreLists,
     getReviews,
@@ -15,5 +18,7 @@ router.get('/challenge', getChallengeLists)
 router.get('/store', getStoreLists)
 router.get('/review', getReviews)
 router.get('/notice', getNotices)
+router.post('/updateCollege', upload('college/').fields([{name: 'img'}, {name: 'userId'}]), updateCollege)
+
 
 module.exports = router

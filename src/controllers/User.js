@@ -3,10 +3,11 @@ const User = mongoose.model('User');
 const StoreList = mongoose.model('StoreList')
 const Review = mongoose.model('Review')
 const Notice = mongoose.model('Notice');
+const College = mongoose.model('College');
 
 const getInformation = async (req, res) => {
     try {
-        const [challengeLists, storeLists, reviews, notices] = await Promise.all([
+        const [challengeLists, storeLists, reviews, notices, college] = await Promise.all([
             StoreList.find({ 
                 SavedUser: { $in: req.user._id }
             }, {
@@ -35,7 +36,8 @@ const getInformation = async (req, res) => {
                 ProfileImage: 1,
                 Type: 1,
                 Target: 1,
-            })
+            }),
+            College.findOne({_id: req.user.College})
             
         ])
         const information = {
@@ -43,6 +45,7 @@ const getInformation = async (req, res) => {
             Name: req.user.Name,
             ProfileImage: req.user.ProfileImage,
             College: req.user.College,
+            CollegeName: college.Name,
             UsedStamp: req.user.UsedStamp,
             Approved: req.user.Approved,
             AllStamp: req.user.AllStamp,
@@ -61,6 +64,21 @@ const updateProfile = async (req, res) => {
     try {
         const { name } = req.body
         const user = await User.findOneAndUpdate({ _id: req.user._id }, { Name: name }, {new: true})
+        res.status(200).send(user)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+const updateCollege = async (req, res) => {
+    try {
+        const image = req.files.img
+        const user = await User.findOneAndUpdate({
+            _id: req.user._id
+        }, {
+            $set: { CollegePhoto: image[0].location }
+        }, {
+            new: true
+        })
         res.status(200).send(user)
     } catch (err) {
         res.status(422).send(err.message)
@@ -129,6 +147,7 @@ const getNotices = async (req, res) => {
 module.exports = {
     getInformation,
     updateProfile,
+    updateCollege,
     getChallengeLists,
     getStoreLists,
     getReviews,

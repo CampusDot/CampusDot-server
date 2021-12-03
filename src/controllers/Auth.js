@@ -102,10 +102,37 @@ const naverSignIn = async (req, res) => {
         return res.status(422).send(err.message);
     }
 }
+
+const getCollege = async (req, res) => {
+    try {
+        const colleges = await College.aggregate([
+            { 
+                $project: { 
+                    StudentCount: { $size: "$Student" },
+                    Name: 1
+                },
+            }, {
+                $sort: {
+                    Name: 1
+                }
+            }
+        ])
+        let result =[]
+        Object.values(colleges).forEach((item) => result.push({
+            value : item.Name,
+            label : item.Name,
+        }))
+        res.status(200).send(result)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
 module.exports = {
     signIn,
     signUp,
     signDelete,
     googleSignIn,
     naverSignIn,
+    getCollege,
 }

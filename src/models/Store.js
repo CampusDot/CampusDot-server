@@ -13,8 +13,12 @@ const storeSchema = new mongoose.Schema({
     },
     Rating: {
         type: Number,
-        default: -1,
-    }
+        default: 0,
+    },
+    ReviewCount: {
+        type: Number,
+        default: 0,        
+    },
 });
 
 mongoose.model('Store', storeSchema);

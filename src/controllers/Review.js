@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Review = mongoose.model('Review');
 const StoreList = mongoose.model('StoreList')
 const User = mongoose.model('User')
-const Store = mongoose.model('Store')
+const Stores = mongoose.model('Store')
 const Stamp = mongoose.model('Stamp')
 require('date-utils');
 
@@ -23,6 +23,14 @@ const postReview = async (req, res) => {
         }, {
             $inc: {
                 AllStamp: 1,
+            }
+        })
+        await Stores.findOneAndUpdate({
+            _id: Store
+        }, {
+            $inc: {
+                Rating: Rating,
+                ReviewCount: 1,
             }
         })
         await new Stamp({
@@ -51,7 +59,7 @@ const getReviewStore = async (req, res) => {
                 'Information.name': 1,
                 'Information.photos': 1,
                 'Information.vicinity': 1,
-                Review: 1,
+                ReviewCount: 1,
                 Rating: 1,
             }),
             Review.find({
@@ -73,7 +81,7 @@ const getReviewStore = async (req, res) => {
                 }
                 const storeData = {
                     Rating: store.Rating,
-                    Review: store.Review,
+                    Review: store.ReviewCount,
                     _id: store._id,
                     Information: {},
                     storeListId: stores._id
@@ -109,10 +117,10 @@ const getSelectedReview = async (req, res) => {
             }).populate('PostUser', {
                 Name: 1, ProfileImage: 1, AllStamp: 1
             }),
-            Store.findOne({
+            Stores.findOne({
                 _id: req.params.id
             }, {
-                Information: 1, Rating: 1,
+                Information: 1, Rating: 1, ReviewCount: 1,
             }),
         ]);
         res.status(200).send([reviewLists, store])

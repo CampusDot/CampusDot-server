@@ -41,17 +41,70 @@ const getStore = async (req, res) => {
 
 const getStoreLists = async (req, res) => {
     try {
-        const storeLists = await StoreList.find({ 
-            College: req.user.College
-        }, {
-            StoreList: 1, SavedUser: 1, FinishedUser: 1, PostUser: 1, Time: 1, Title: 1, Comment: 1, StorePhoto: 1
-        }).populate('StoreList', {
-            Information: 1,
-        }).populate('PostUser', {
-            Name: 1, ProfileImage: 1, AllStamp: 1
-        }).limit(20).skip(20 * req.params.page)
-        const result = storeLists.filter((storeList) => !storeList.SavedUser.includes(req.user._id))
-        res.status(200).send(result)
+        let storeLists;
+        if(req.params.sort === 'recent') {
+            storeLists = await StoreList.find({
+                $and: [
+                    { College: req.user.College },
+                    { SavedUser: { $nin: req.user._id } }
+                ] 
+            }, {
+                StoreList: 1, SavedUser: 1, FinishedUser: 1, PostUser: 1, Time: 1, Title: 1, Comment: 1, StorePhoto: 1
+            }).populate('StoreList', {
+                Information: 1,
+            }).populate('PostUser', {
+                Name: 1, ProfileImage: 1, AllStamp: 1
+            }).limit(20).skip(20 * req.params.page)
+        } else {
+            storeLists = await StoreList.aggregate([
+                {
+                    $match: {
+                        College: req.user.College 
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'stores',
+                        localField: 'StoreList',
+                        foreignField: '_id',
+                        as: 'StoreList',
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'PostUser',
+                        foreignField: '_id',
+                        as: 'PostUser'  
+                    } 
+                },
+                {
+                    $project: {
+                        SavedCount: { $size: "$SavedUser" },
+                        'StoreList.Information': 1, 
+                        'StoreList._id': 1, 
+                        SavedUser: 1, 
+                        FinishedUser: 1, 
+                        'PostUser.Name': 1, 
+                        'PostUser.ProfileImage': 1, 
+                        'PostUser.AllStamp': 1, 
+                        Time: 1, 
+                        Title: 1, 
+                        Comment: 1, 
+                        StorePhoto: 1
+                    }
+                }, {
+                    $sort: {
+                        SavedCount: -1
+                    }
+                }
+            ]).limit(20).skip(20 * req.params.page)
+            Object.values(storeLists).forEach((storeList) => {
+                storeList.PostUser = storeList.PostUser[0]
+            })
+            storeLists = storeLists.filter((storeList) => !JSON.stringify(storeList.SavedUser).includes(req.user._id))
+        }
+        res.status(200).send(storeLists)
     } catch (err) {
         res.status(422).send(err.message)
     }

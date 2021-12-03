@@ -9,7 +9,7 @@ const {
 } = require('../controllers/College')
 
 router.get('/store/:category/:page', getStore)
-router.get('/storeLists/:page', getStoreLists)
+router.get('/storeLists/:sort/:page', getStoreLists)
 router.get('/', getCollege)
 router.get('/myRanking', getMyCollegeRanking)
 router.get('/otherRanking', getOtherCollegeRanking)

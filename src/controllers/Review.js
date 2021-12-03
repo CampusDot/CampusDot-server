@@ -81,7 +81,7 @@ const getReviewStore = async (req, res) => {
                 }
                 const storeData = {
                     Rating: store.Rating,
-                    Review: store.ReviewLen,
+                    Review: store.ReviewCount,
                     _id: store._id,
                     Information: {},
                     storeListId: stores._id

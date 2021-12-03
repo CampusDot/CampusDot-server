@@ -30,7 +30,7 @@ const postReview = async (req, res) => {
         }, {
             $inc: {
                 Rating: Rating,
-                ReviewLen: 1,
+                ReviewCount: 1,
             }
         })
         await new Stamp({
@@ -59,7 +59,7 @@ const getReviewStore = async (req, res) => {
                 'Information.name': 1,
                 'Information.photos': 1,
                 'Information.vicinity': 1,
-                ReviewLen: 1,
+                ReviewCount: 1,
                 Rating: 1,
             }),
             Review.find({
@@ -120,7 +120,7 @@ const getSelectedReview = async (req, res) => {
             Stores.findOne({
                 _id: req.params.id
             }, {
-                Information: 1, Rating: 1, ReviewLen: 1,
+                Information: 1, Rating: 1, ReviewCount: 1,
             }),
         ]);
         res.status(200).send([reviewLists, store])

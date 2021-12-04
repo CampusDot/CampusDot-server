@@ -13,7 +13,6 @@ require('./models/StoreList')
 require('./models/User')
 require('./models/Filter')
 
-
 const authRoutes = require('./routes/Auth')
 const userRoutes = require('./routes/User')
 const collegeRoutes = require('./routes/College')

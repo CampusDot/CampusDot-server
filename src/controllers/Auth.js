@@ -37,6 +37,13 @@ const signUp = async (req, res) => {
             Name: name,
             College: myCollege._id
         }).save()
+        await College.findOneAndUpdate({ 
+            Name: college
+        }, {
+            $push: {
+                Student: newUser._id
+            }
+        })
         const token = jwt.sign({ userId: newUser._id }, process.env.TOKEN_SECRET)
         res.status(200).send(token)
     } catch (err) {

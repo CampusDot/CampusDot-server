@@ -26,7 +26,17 @@ const reviewSchema = new mongoose.Schema({
     StoreList: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'StoreList'
-    }
+    },
+    Filters: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Filter'
+    }],
+    Up: {
+        type: Number,
+    },
+    Down: {
+        type: Number
+    },
 });
 
 mongoose.model('Review', reviewSchema);

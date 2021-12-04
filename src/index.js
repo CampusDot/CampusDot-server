@@ -11,6 +11,8 @@ require('./models/Stamp')
 require('./models/Store')
 require('./models/StoreList')
 require('./models/User')
+require('./models/Filter')
+
 
 const authRoutes = require('./routes/Auth')
 const userRoutes = require('./routes/User')

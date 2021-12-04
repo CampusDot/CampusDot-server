@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const reviewSchema = new mongoose.Schema({
-    PostUser : {
+    PostUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -18,15 +18,11 @@ const reviewSchema = new mongoose.Schema({
     }],
     Rating: {
         type: Number,
-    }, 
+    },
     Store: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store'
     },
-    StoreList: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'StoreList'
-    }
 });
 
 mongoose.model('Review', reviewSchema);

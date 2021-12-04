@@ -128,6 +128,49 @@ const getSelectedReview = async (req, res) => {
         res.status(422).send(err.message)
     }
 }
+const getReview = async (req, res) => {
+    try {
+        const reviews = await Review.find().populate('Stores').populate('PostUser');
+        res.status(200).send(reviews)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
+const UpReview = async (req, res) => {
+    const { id } = req.body
+    try {
+        const review = await Review.findOneAndUpdate({
+            _id: id
+        }, {
+            $inc: {
+                Up: 1,
+            }
+        })        
+        
+        res.status(200).send(review)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
+const DownReview = async (req, res) => {
+    const { id } = req.body
+    try {
+        const review = await Review.findOneAndUpdate({
+            _id: id
+        }, {
+            $inc: {
+                Up: -1,
+            }
+        })        
+        
+        res.status(200).send(review)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
 
 const uploadImage = async (req, res) => {
     try {
@@ -154,5 +197,8 @@ module.exports = {
     postReview,
     getReviewStore,
     getSelectedReview,
-    uploadImage
+    uploadImage,
+    getReview,
+    UpReview,
+    DownReview,
 }

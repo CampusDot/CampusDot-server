@@ -49,7 +49,6 @@ const getRecommendStore = async (req, res) => {
                     UpCount: { $size: "$Up" },
                     'PostUser.Name': 1,
                     'PostUser.ProfileImage': 1,
-                    'Store': 1,
                     Content: 1,
                     Time: 1,
                     Photo: 1,
@@ -78,7 +77,7 @@ const getRecommendStore = async (req, res) => {
             }
         })
         result.sort(() => Math.random() - 0.5);
-
+        console.log(result, 'here')
         res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)
@@ -191,15 +190,27 @@ const getReview = async (req, res) => {
 const UpReview = async (req, res) => {
     const { id } = req.body
     try {
-        await Review.findOneAndUpdate({
+        const review = await Review.findOneAndUpdate({
             _id: id
         }, {
             $push: {
                 Up: req.user._id,
             }
-        })        
+        },{
+            new: true,
+            Store: 1,
+            Content: 1,
+            Time: 1,
+            Photo: 1,
+            Filters: 1,
+            Up: 1,
+            Down: 1,
+            PostUser: 1
+        }).populate('PostUser', {
+            Name: 1, ProfileImage: 1
+        }).populate('Store')   
         const result = await Review.find().populate('Store').populate('PostUser');
-        res.status(200).send(result)
+        res.status(200).send([result, review])
     } catch (err) {
         res.status(422).send(err.message)
     }
@@ -208,15 +219,27 @@ const UpReview = async (req, res) => {
 const DownReview = async (req, res) => {
     const { id } = req.body
     try {
-        await Review.findOneAndUpdate({
+        const review = await Review.findOneAndUpdate({
             _id: id
         }, {
             $push: {
                 Down: req.user._id,
             }
-        })        
+        },{
+            new: true,
+            Store: 1,
+            Content: 1,
+            Time: 1,
+            Photo: 1,
+            Filters: 1,
+            Up: 1,
+            Down: 1,
+            PostUser: 1
+        }).populate('PostUser', {
+            Name: 1, ProfileImage: 1
+        }).populate('Store')   
         const result = await Review.find().populate('Store').populate('PostUser');
-        res.status(200).send(result)
+        res.status(200).send([result, review])
     } catch (err) {
         res.status(422).send(err.message)
     }

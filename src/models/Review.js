@@ -16,29 +16,22 @@ const reviewSchema = new mongoose.Schema({
     Photo: [{
         type: String,
     }],
-    Rating: {
-        type: Number,
-    },
     Store: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store'
-    },
-    StoreList: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'StoreList'
     },
     Filters: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Filter'
     }],
-    Up: {
-        type: Number,
-        default: 0,
-    },
-    Down: {
-        type: Number,
-        default: 0,
-    },
+    Up: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'  
+    }],
+    Down: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'  
+    }],
 });
 
 mongoose.model('Review', reviewSchema);

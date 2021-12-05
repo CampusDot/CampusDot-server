@@ -12,32 +12,11 @@ const postReview = async (req, res) => {
     try {
         const review = await new Review({
             Content,
-            Rating,
             Store,
             Time,
-            StoreList,
+            Filters,
             PostUser: req.user._id
         }).save();
-        await User.findOneAndUpdate({
-            _id: req.user._id
-        }, {
-            $inc: {
-                AllStamp: 1,
-            }
-        })
-        await Stores.findOneAndUpdate({
-            _id: Store
-        }, {
-            $inc: {
-                Rating: Rating,
-                ReviewCount: 1,
-            }
-        })
-        await new Stamp({
-            Type: 'Store',
-            Owner: req.user._id,
-            TargetStore: Store
-        }).save()
         res.status(200).send(review._id);
     } catch (err) {
         res.status(422).send(err.message)
@@ -140,15 +119,16 @@ const getReview = async (req, res) => {
 const UpReview = async (req, res) => {
     const { id } = req.body
     try {
-        const review = await Review.findOneAndUpdate({
+        await Review.findOneAndUpdate({
             _id: id
         }, {
-            $inc: {
-                Up: 1,
+            $push: {
+                Up: req.user._id,
             }
         })        
-        
-        res.status(200).send(review)
+        const result = await Review.find().populate('Stores').populate('PostUser');
+
+        res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)
     }
@@ -157,15 +137,15 @@ const UpReview = async (req, res) => {
 const DownReview = async (req, res) => {
     const { id } = req.body
     try {
-        const review = await Review.findOneAndUpdate({
+        await Review.findOneAndUpdate({
             _id: id
         }, {
-            $inc: {
-                Up: -1,
+            $push: {
+                Down: req.user._id,
             }
         })        
-        
-        res.status(200).send(review)
+        const result = await Review.find().populate('Stores').populate('PostUser');
+        res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)
     }

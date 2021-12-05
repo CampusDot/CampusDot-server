@@ -33,9 +33,11 @@ const reviewSchema = new mongoose.Schema({
     }],
     Up: {
         type: Number,
+        default: 0,
     },
     Down: {
-        type: Number
+        type: Number,
+        default: 0,
     },
 });
 

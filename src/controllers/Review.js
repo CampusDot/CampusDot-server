@@ -182,9 +182,10 @@ const getSelectedReview = async (req, res) => {
         res.status(422).send(err.message)
     }
 }
+
 const getReview = async (req, res) => {
     try {
-        const reviews = await Review.find().populate('Stores').populate('PostUser');
+        const reviews = await Review.find().populate('Store').populate('PostUser');
         res.status(200).send(reviews)
     } catch (err) {
         res.status(422).send(err.message)
@@ -194,15 +195,16 @@ const getReview = async (req, res) => {
 const UpReview = async (req, res) => {
     const { id } = req.body
     try {
-        const review = await Review.findOneAndUpdate({
+        await Review.findOneAndUpdate({
             _id: id
         }, {
             $push: {
                 Up: req.user._id,
             }
         })        
-        
-        res.status(200).send(review)
+        const result = await Review.find().populate('Store').populate('PostUser');
+
+        res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)
     }
@@ -211,15 +213,15 @@ const UpReview = async (req, res) => {
 const DownReview = async (req, res) => {
     const { id } = req.body
     try {
-        const review = await Review.findOneAndUpdate({
+        await Review.findOneAndUpdate({
             _id: id
         }, {
             $push: {
                 Down: req.user._id,
             }
         })        
-        
-        res.status(200).send(review)
+        const result = await Review.find().populate('Store').populate('PostUser');
+        res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)
     }

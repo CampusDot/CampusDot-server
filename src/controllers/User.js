@@ -4,6 +4,7 @@ const StoreList = mongoose.model('StoreList')
 const Review = mongoose.model('Review')
 const Notice = mongoose.model('Notice');
 const College = mongoose.model('College');
+const Filter = mongoose.model('Filter')
 
 const getInformation = async (req, res) => {
     try {

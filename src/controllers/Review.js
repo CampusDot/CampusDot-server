@@ -1,44 +1,98 @@
 const mongoose = require('mongoose');
 const Review = mongoose.model('Review');
 const StoreList = mongoose.model('StoreList')
-const User = mongoose.model('User')
 const Stores = mongoose.model('Store')
-const Stamp = mongoose.model('Stamp')
+const Filter = mongoose.model('Filter')
 require('date-utils');
 
 const postReview = async (req, res) => {
-    const { Content, Rating, Store, StoreList } = req.body;
+    const { Content, Store, Filters } = req.body;
     const Time = new Date();
     try {
         const review = await new Review({
             Content,
-            Rating,
             Store,
             Time,
-            StoreList,
+            Filters,
             PostUser: req.user._id
         }).save();
-        await User.findOneAndUpdate({
-            _id: req.user._id
-        }, {
-            $inc: {
-                AllStamp: 1,
-            }
-        })
         await Stores.findOneAndUpdate({
             _id: Store
         }, {
             $inc: {
-                Rating: Rating,
                 ReviewCount: 1,
             }
         })
-        await new Stamp({
-            Type: 'Store',
-            Owner: req.user._id,
-            TargetStore: Store
-        }).save()
         res.status(200).send(review._id);
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
+const getRecommendStore = async (req, res) => {
+    try {
+        const { filters } = req.body
+        let result = []
+        const reviews = await Review.aggregate([
+            {
+                $lookup: {
+                    from: 'stores',
+                    localField: 'Store',
+                    foreignField: '_id',
+                    as: 'Store',
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'PostUser',
+                    foreignField: '_id',
+                    as: 'PostUser'
+                }
+            },
+            {
+                $project: {
+                    UpCount: { $size: "$Up" },
+                    'PostUser.Name': 1,
+                    'PostUser.ProfileImage': 1,
+                    'Store': 1,
+                    Content: 1,
+                    Time: 1,
+                    Photo: 1,
+                    Store: 1,
+                    Filters: 1,
+                    Up: 1,
+                    Down: 1
+                }
+            }, {
+                $sort: {
+                    UpCount: -1
+                }
+            }
+        ])
+        Object.values(reviews).forEach((review) => {
+            let check = false
+            Object.values(review.Filters).forEach((filter) => {
+                if(filters.includes(String(filter))) {
+                    check = true
+                }
+            })
+            review.PostUser = review.PostUser[0]
+            review.Store = review.Store[0]
+            if (check) {
+                result.push(review)
+            }
+        })
+        res.status(200).send(result)
+    } catch (err) {
+        res.status(422).send(err.message)
+    }
+}
+
+const getFilterType = async (req, res) => {
+    try {
+        const filter = await Filter.find({})
+        res.status(200).send(filter)
     } catch (err) {
         res.status(422).send(err.message)
     }
@@ -143,8 +197,8 @@ const UpReview = async (req, res) => {
         const review = await Review.findOneAndUpdate({
             _id: id
         }, {
-            $inc: {
-                Up: 1,
+            $push: {
+                Up: req.user._id,
             }
         })        
         
@@ -160,8 +214,8 @@ const DownReview = async (req, res) => {
         const review = await Review.findOneAndUpdate({
             _id: id
         }, {
-            $inc: {
-                Up: -1,
+            $push: {
+                Down: req.user._id,
             }
         })        
         
@@ -195,10 +249,12 @@ const uploadImage = async (req, res) => {
 
 module.exports = {
     postReview,
+    getFilterType,
     getReviewStore,
     getSelectedReview,
     uploadImage,
     getReview,
     UpReview,
     DownReview,
+    getRecommendStore
 }

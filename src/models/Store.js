@@ -11,10 +11,6 @@ const storeSchema = new mongoose.Schema({
     Category:{
         type: String,
     },
-    Rating: {
-        type: Number,
-        default: 0,
-    },
     ReviewCount: {
         type: Number,
         default: 0,        

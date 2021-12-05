@@ -16,13 +16,7 @@ const postReview = async (req, res) => {
             Filters,
             PostUser: req.user._id
         }).save();
-        await Stores.findOneAndUpdate({
-            _id: Store
-        }, {
-            $inc: {
-                ReviewCount: 1,
-            }
-        })
+
         res.status(200).send(review._id);
     } catch (err) {
         res.status(422).send(err.message)
@@ -203,7 +197,6 @@ const UpReview = async (req, res) => {
             }
         })        
         const result = await Review.find().populate('Store').populate('PostUser');
-
         res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)

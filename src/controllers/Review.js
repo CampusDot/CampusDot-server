@@ -176,9 +176,10 @@ const getSelectedReview = async (req, res) => {
         res.status(422).send(err.message)
     }
 }
+
 const getReview = async (req, res) => {
     try {
-        const reviews = await Review.find().populate('Stores').populate('PostUser');
+        const reviews = await Review.find().populate('Store').populate('PostUser');
         res.status(200).send(reviews)
     } catch (err) {
         res.status(422).send(err.message)
@@ -195,8 +196,7 @@ const UpReview = async (req, res) => {
                 Up: req.user._id,
             }
         })        
-        const result = await Review.find().populate('Stores').populate('PostUser');
-
+        const result = await Review.find().populate('Store').populate('PostUser');
         res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)
@@ -213,7 +213,7 @@ const DownReview = async (req, res) => {
                 Down: req.user._id,
             }
         })        
-        const result = await Review.find().populate('Stores').populate('PostUser');
+        const result = await Review.find().populate('Store').populate('PostUser');
         res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)

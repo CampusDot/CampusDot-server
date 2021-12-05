@@ -77,7 +77,6 @@ const getRecommendStore = async (req, res) => {
             }
         })
         result.sort(() => Math.random() - 0.5);
-        console.log(result, 'here')
         res.status(200).send(result)
     } catch (err) {
         res.status(422).send(err.message)
